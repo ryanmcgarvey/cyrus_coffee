@@ -1,0 +1,20 @@
+<h2>Listing orders</h2>
+
+<table class="table" id="orders">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Instructions</th>
+      <th>Status</th>
+
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+<%= for order <- @orders do %>
+  <%= render "order_item.html", order: order, conn: @conn %>
+<% end %>
+  </tbody>
+</table>
+
+<%= link "New order", to: order_path(@conn, :new) %>
