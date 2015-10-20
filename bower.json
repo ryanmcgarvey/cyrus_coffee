@@ -1,0 +1,6 @@
+{
+  "name": "Cyrus",
+  "dependencies": {
+    "elementaljs": "~ 1.0.0"
+  }
+}

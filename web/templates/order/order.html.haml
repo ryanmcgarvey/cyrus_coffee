@@ -1,0 +1,8 @@
+%tr{role: "order-#{@order.id}"}
+  %td=@order.name
+  %td=@order.instructions
+
+  %td.text-right
+    - for button <- buttons(@order) do
+      .btn.btn-default
+        =link(button.name, method: :patch, data_behavior: "RemoteCall", to: order_order_path(@conn, :update_status, @order, %{action: button.action}))

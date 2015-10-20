@@ -19,7 +19,7 @@ defmodule Cyrus.OrderController do
 
     case Repo.insert(changeset) do
       {:ok, order} ->
-        order_body = Phoenix.View.render_to_string(Cyrus.OrderView, "order_item.html", %{order: order, conn: conn})
+        order_body = Phoenix.View.render_to_string(Cyrus.OrderView, "order.html", %{order: order, conn: conn})
         Cyrus.Endpoint.broadcast "orders", "new_order", %{"body" => order_body}
         conn
         |> put_flash(:info, "Order created successfully.")
@@ -32,6 +32,19 @@ defmodule Cyrus.OrderController do
   def show(conn, %{"id" => id}) do
     order = Repo.get!(Order, id)
     render(conn, "show.html", order: order)
+  end
+
+  def accept(conn, %{"id" => id}) do
+    order = Repo.get!(Order, id)
+    changeset = Order.changeset(order, %{"status" => "accepted"})
+
+    case Repo.update(changeset) do
+      {:ok, order} ->
+        conn
+        render(conn, "order_item.html", ordeR: order)
+      {:error, changeset} ->
+        render(conn, "order_item.html", order: order, changeset: changeset)
+    end
   end
 
   def edit(conn, %{"id" => id}) do
@@ -56,13 +69,28 @@ defmodule Cyrus.OrderController do
 
   def delete(conn, %{"id" => id}) do
     order = Repo.get!(Order, id)
-
-    # Here we use delete! (with a bang) because we expect
-    # it to always work (and if it does not, it will raise).
     Repo.delete!(order)
-
     conn
     |> put_flash(:info, "Order deleted successfully.")
     |> redirect(to: order_path(conn, :index))
+  end
+
+  def update_status(conn, %{"action" => action, "order_id" => id}) do
+    order = Repo.get!(Order, id)
+    status = case action do
+      "accept" -> "accepted"
+      "reject" -> "rejected"
+    end
+    changeset = Order.changeset(order, %{"status" => status})
+    case Repo.update(changeset) do
+      {:ok, order} ->
+        order_body = Phoenix.View.render_to_string(Cyrus.OrderView, "order_item.html", %{order: order, conn: conn})
+        Cyrus.Endpoint.broadcast "orders", "updated", %{"body" => order_body}
+        conn
+        |> send_resp(201, "")
+      {:error, changeset} ->
+        conn
+        |> send_resp(500, "")
+    end
   end
 end

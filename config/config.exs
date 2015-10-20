@@ -12,7 +12,14 @@ config :cyrus, Cyrus.Endpoint,
   secret_key_base: "Y9Kfajvm4BFmHM0Ed9KBOEwXEkfF+BhIN4fz4dwlsFi1MhY3+yT5JGFDEEFUFyQv",
   render_errors: [accepts: ~w(html json)],
   pubsub: [name: Cyrus.PubSub,
-           adapter: Phoenix.PubSub.PG2]
+           adapter: Phoenix.PubSub.PG2],
+  live_reload: [
+    patterns: [
+      ~r{priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$},
+      ~r{web/views/.*(ex)$},
+      ~r{web/templates/.*(eex|haml)$}
+    ]
+  ]
 
 # Configures Elixir's Logger
 config :logger, :console,
@@ -27,3 +34,6 @@ import_config "#{Mix.env}.exs"
 config :phoenix, :generators,
   migration: true,
   binary_id: false
+
+ config :phoenix, :template_engines,
+  haml: PhoenixHaml.Engine

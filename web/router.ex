@@ -15,9 +15,10 @@ defmodule Cyrus.Router do
 
   scope "/", Cyrus do
     pipe_through :browser # Use the default browser stack
-
-    get "/", PageController, :index
-    resources "/orders", OrderController
+    get "/", OrderController, :index
+    resources "/orders", OrderController do
+      patch "/status", OrderController, :update_status
+    end
   end
 
   # Other scopes may use custom stacks.

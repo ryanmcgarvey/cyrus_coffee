@@ -5,15 +5,14 @@
     <tr>
       <th>Name</th>
       <th>Instructions</th>
-      <th>Status</th>
 
       <th></th>
     </tr>
   </thead>
   <tbody>
-<%= for order <- @orders do %>
-  <%= render "order_item.html", order: order, conn: @conn %>
-<% end %>
+    <%= for order <- @orders do %>
+      <%= render "order.html", order: order, conn: @conn %>
+    <% end %>
   </tbody>
 </table>
 
